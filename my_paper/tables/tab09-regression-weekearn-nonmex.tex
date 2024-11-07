@@ -1,0 +1,33 @@
+\begin{table}[H]
+
+\caption{Effect of Having Hispanic Last Name: Hispanics with Non-Mexican Ancestry  \label{tab:lastnamereg-weekearm-nonmex}}
+\centering
+\begin{threeparttable}
+\begin{tabular}[t]{lcccc}
+\toprule
+  & \specialcell{(1) \\ Log weekly \\ earnings} & \specialcell{(2) \\ Log weekly \\ earnings} & \specialcell{(3) \\  Log weekly \\ earnings} & \specialcell{(4) \\  Log weekly \\ earnings}\\
+\midrule
+$HW_{ist}$ & \num{-0.04} & \num{-0.04} & \num{-0.01} & \num{0.00}\\
+ & (\num{0.03}) & (\num{0.02}) & (\num{0.02}) & (\num{0.03})\\
+Constant & \num{6.71}*** &  &  & \\
+ & (\num{0.03}) &  &  & \\
+\midrule
+\textit{Controlling for:} &  &  &  & \\
+State FE &  & X & X & X\\
+Year FE &  & X & X & X\\
+Age FE &  & X & X & X\\
+Education FE &  &  & X & X\\
+Parental Background &  &  &  & X\\
+Observations & \num{2859} & \num{2859} & \num{2859} & \num{2859}\\
+\bottomrule
+\multicolumn{5}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
+\end{tabular}
+\begin{tablenotes}
+\item[1] {\setstretch{1.0}\footnotesize{This table includes the estimation results of equation (\ref{eq:1a}) where the dependent variable is log weekly earnings.}}
+\item[2] {\setstretch{1.0}\footnotesize{HW is an indicator variable that is equal to 1 if a person is the child of a Hispanic-father and White-mother.}}
+\item[3] {\setstretch{1.0}\footnotesize{The sample is restricted to men working full-time and are wage and salary workers.}}
+\item[4] {\setstretch{1.0}\footnotesize{Column one has the regression results when controlling for hours worked, age, education, year and state fixed effects. Column two has the results after controlling for education.}}
+\item[5] {\setstretch{1.0}\footnotesize{Standard errors are clustered on the state level.}}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
