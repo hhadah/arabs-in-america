@@ -4,8 +4,12 @@
 # Edited: Nov 6th. 2024
 ###################################
 
+# Upload the data
+CPS <- fread(file.path(dropbox_dir,"CPS.csv.gz"))
+
 library(survey)
 library(srvyr)
+library(Hmisc)
 
 safe_colorblind_palette <- c("#88CCEE", "#CC6677", "#DDCC77", "#117733", "#332288", "#AA4499", "#44AA99", "#999933", "#882255")
 scales::show_col(safe_colorblind_palette)
@@ -14,24 +18,30 @@ CPS <- CPS[!is.na(hwtfinl) | !is.na(asecwt)]
 ### Arabs
 
 # objective
-CPS_mean_reg_0bj_Arab <- CPS[!is.na(hwtfinl),.( MeanArab = weighted.mean(Arab_Obj, w =hwtfinl, na.rm = T)), by = .(year, statefip)]
-fwrite(CPS_mean_reg_0bj_Arab, "CPS_Arabs_bystate_DataTable.csv")
+CPS_mean_state_0bj_Arab <- CPS[!is.na(hwtfinl), .( MeanArab = weighted.mean(Arab_Obj, w =hwtfinl, na.rm = T), 
+                                                     SDArab   = sqrt(wtd.var(Arab_Obj, w =hwtfinl, na.rm = T))), by = .(year, statefip)]
+fwrite(CPS_mean_state_0bj_Arab, file.path(datasets, 'CPS_Arabs_bystate_DataTable.csv.gz'))
 
 CPS_mean_reg_0bj_Arab <- CPS[!is.na(hwtfinl),.( MeanArab = weighted.mean(Arab_Obj, w =hwtfinl, na.rm = T)), by = .(year, region)]
 CPS_mean_0bj_Arab <- CPS[!is.na(hwtfinl), .(MeanArab = weighted.mean(Arab_Obj, w =hwtfinl, na.rm = T)), by = .(year)]
 
+
+#----------------- Plotting -----------------#
+# Arabs Nationally
 
 ggplot(CPS_mean_0bj_Arab, aes(year, MeanArab)) +
   geom_point() + theme_customs() +
   scale_color_manual(values = safe_colorblind_palette) +
   stat_summary(geom = 'line') +
   labs(x = "Year", y = "Percent Objectively Arab") +
-  ggtitle("Objectively Arab in the US Over Time") +
-  scale_x_continuous(limits = c(1994, 2022), breaks = seq(1995, 2020, 5))# +
+  ggtitle("Arabs Second Gen+ in the US Over Time") +
+  scale_x_continuous(limits = c(1994, 2022), breaks = seq(1995, 2020, 5)) +
+  theme_customs()
 # scale_y_continuous(limits = c(0.08,0.17), breaks = seq(0.08,0.2,0.02))
-ggsave("Arab_all_Obj.png", width = 10, height = 4, units = "in")
+ggsave(paste0(figures_wd,"/01-Arab_all_Obj.png"), width = 10, height = 6, units = "in")
+ggsave(paste0(thesis_plots,"/01-Arab_all_Obj.png"), width = 10, height = 6, units = "in")
 
-
+# Arabs by Region
 ggplot(CPS_mean_reg_0bj_Arab, aes(year, MeanArab)) +
   geom_point(aes(color = factor(region))) +theme_customs() +
   # geom_smooth(aes(color = factor(region)))+
@@ -43,8 +53,10 @@ ggplot(CPS_mean_reg_0bj_Arab, aes(year, MeanArab)) +
   labs(x = "Year", y = "Percent Objectively Arab") +
   ggtitle("Objectively Arab in the US Over Time: By Region") +
   scale_x_continuous(limits = c(1994, 2022), breaks = seq(1995, 2020, 5)) +
-  scale_y_continuous(limits = c(0.0,0.045), breaks = seq(0.0,0.045,0.01))
-ggsave("Arab.png", width = 10, height = 4, units = "in")
+  scale_y_continuous(limits = c(0.0,0.045), breaks = seq(0.0,0.045,0.01)) +
+  theme_customs()
+ggsave(paste0(figures_wd,"/02-Arab.png"), width = 10, height = 6, units = "in")
+ggsave(paste0(thesis_plots,"/02-Arab.png"), width = 10, height = 6, units = "in")
 
 
 # Keep observations that are between the ages of 16 and 18
@@ -176,11 +188,53 @@ CPS[,':=' (DadYearEduc = case_when(educ99_pop == 2 ~ 2,
 
 # Arabs
 CPS_arabs <- CPS[FirstGen_Arab == 1 | SecondGen_Arab == 1 | ThirdGen_Arab == 1]
-
-fwrite(CPS_arabs, "CPS_DataTable_Arabs.csv")
+fwrite(CPS_arabs, file.path(datasets, 'CPS_DataTable_Arabs.csv.gz'))
 
 # Create data set of
 # percent arabs by county
 
 CPS_mean_reg_0bj_arabs_county <- CPS[!is.na(hwtfinl),.(Arabs = weighted.mean(Arab_Obj, w =hwtfinl, na.rm = T)), by = .(year, county)]
-fwrite(CPS_mean_reg_0bj_arabs_county, "CPS_Arabs_by_county.csv")
+fwrite(CPS_mean_reg_0bj_arabs_county, file.path(datasets, 'CPS_Arabs_by_county.csv.gz'))
+
+#----------------- Table -----------------#
+# Arabis in 2020 by State
+
+CPS_mean_state_0bj_Arab  <- as.data.frame(CPS_mean_state_0bj_Arab)
+
+CPS_mean_state_0bj_Arab_2020  <- CPS_mean_state_0bj_Arab |> 
+  filter(year == 2020)  |> 
+  mutate(state_name = fips(statefip, to = "Name"))
+
+CPS_mean_state_0bj_Arab_2020 <- CPS_mean_state_0bj_Arab_2020 |>
+  rename(
+    State = state_name,
+    `Proportion Arab` = MeanArab,
+    `SD Arab` = SDArab
+  )
+
+CPS_mean_state_0bj_Arab_2020 <- CPS_mean_state_0bj_Arab_2020 |>
+  select(State, `Proportion Arab`, `SD Arab`)
+
+CPS_mean_state_0bj_Arab_2020 <- CPS_mean_state_0bj_Arab_2020 |>
+  mutate(`Percent Arab` = scales::percent(`Proportion Arab`, accuracy = 0.01),
+         `SD Arab` = scales::percent(`SD Arab`, accuracy = 0.01))
+CPS_mean_state_0bj_Arab_2020 <- CPS_mean_state_0bj_Arab_2020 |>
+  select(State, `Percent Arab`, `SD Arab`)
+knitr::kable(CPS_mean_state_0bj_Arab_2020, "latex", align = "lcc",
+             booktabs = T,
+             escape = T,
+             longtable = T, 
+             caption = "Percent Arab by State \\label{tab:tab-01}") |>
+  column_spec(1, bold = T)  |> 
+  kable_classic(full_width = F) |> 
+  kable_styling(#bootstrap_options = c("hover", "condensed"), 
+                latex_options = c(#"scale_down", 
+                "repeat_header",
+                "HOLD_position")) |> 
+  footnote(number = c("This table shows the proportion of Arab Americans in each state in 2020. The standard deviation is also reported.", 
+                      "Source: Author's calculations from the Current Population Survey (CPS) 2020."),
+           footnote_as_chunk = F, title_format = c("italic"),
+           escape = F, threeparttable = T
+  ) |> 
+  save_kable(file.path(tables_wd,"tab01-arab-bystate.tex")) |> 
+  save_kable(file.path(thesis_tabs,"tab01-arab-bystate.tex")) 

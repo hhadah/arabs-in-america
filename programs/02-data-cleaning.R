@@ -210,3 +210,5 @@ CPS[, Interracial_Black := case_when(
 CPS[, Hispanic_Obj := ifelse(FirstGen == 1 | SecondGen == 1 | ThirdGen == 1 | FourthGen == 1, 1, 0)]
 CPS[, Asian_Obj := ifelse(FirstGen_Asian == 1 | SecondGen_Asian == 1 | ThirdGen_Asian == 1 | FourthGen_Asian == 1, 1, 0)]
 CPS[, Arab_Obj := ifelse(FirstGen_Arab == 1 | SecondGen_Arab == 1 | ThirdGen_Arab == 1, 1, 0)]
+
+fwrite(CPS, file.path(dropbox_dir, 'CPS.csv.gz'))
