@@ -196,6 +196,77 @@ fwrite(CPS_arabs, file.path(datasets, 'CPS_DataTable_Arabs.csv.gz'))
 CPS_mean_reg_0bj_arabs_county <- CPS[!is.na(hwtfinl),.(Arabs = weighted.mean(Arab_Obj, w =hwtfinl, na.rm = T)), by = .(year, county)]
 fwrite(CPS_mean_reg_0bj_arabs_county, file.path(datasets, 'CPS_Arabs_by_county.csv.gz'))
 
+#----------------- Map -----------------#
+# Arabs in 2020 by State
+# Required Libraries
+# Required Libraries
+library(ggspatial)
+library(ggplot2)
+library(dplyr)
+library(sf)
+library(maps)
+library(tigris)
+library(patchwork)  # For combining plots
+
+# Separate Alaska, Hawaii, and contiguous US
+contiguous_us <- map_data %>% filter(!NAME %in% c("Alaska", "Hawaii"))
+
+# Transform Alaska with more extreme shifting
+alaska <- map_data %>% 
+  filter(NAME == "Alaska") %>%
+  # Transform to geographic coordinates
+  st_transform(4326) %>% 
+  st_shift_longitude() %>%
+  # Transform back and adjust position
+  st_transform(st_crs(map_data)) %>%
+  mutate(geometry = geometry * 0.35) %>%
+  # Much larger shifting values to move Alaska completely out
+  mutate(geometry = geometry + c(-8500000, -4500000))
+
+# Transform Hawaii
+hawaii <- map_data %>% 
+  filter(NAME == "Hawaii") %>%
+  st_transform(st_crs(map_data)) %>%
+  mutate(geometry = geometry * 0.5) %>%
+  mutate(geometry = geometry + c(5000000, -1000000))
+
+# Create plots for each region
+mainland_plot <- ggplot(contiguous_us) +
+  geom_sf(aes(fill = Arab_Category), color = "white", size = 0.2) +
+  scale_fill_manual(values = arab_palette, name = "Percent Arab") +
+  labs(title = "Percent Arabs by State (2020)"#,
+       #subtitle = "CPS Data, Weighted Means"
+       ) +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    panel.grid = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank()
+  )
+
+alaska_plot <- ggplot() +
+  geom_sf(data = alaska, aes(fill = Arab_Category), color = "white", size = 0.2) +
+  scale_fill_manual(values = arab_palette, guide = "none") +
+  theme_void() +
+  coord_sf(datum = NA)
+
+hawaii_plot <- ggplot() +
+  geom_sf(data = hawaii, aes(fill = Arab_Category), color = "white", size = 0.2) +
+  scale_fill_manual(values = arab_palette, guide = "none") +
+  theme_void() +
+  coord_sf(datum = NA)
+
+# Combine the plots with adjusted inset positions
+final_map <- mainland_plot +
+  inset_element(alaska_plot, left = 0.01, bottom = 0.1, right = 0.3, top = 0.3) +  # Adjusted inset position
+  inset_element(hawaii_plot, left = 0.01, bottom = 0.02, right = 0.15, top = 0.15)
+
+print(final_map)
+
+ggsave(paste0(figures_wd,"/03-Arab-Map-2020.png"), width = 10, height = 6, units = "in")
+ggsave(paste0(thesis_plots,"/03-Arab-Map-2020.png"), width = 10, height = 6, units = "in")
+
 #----------------- Table -----------------#
 # Arabis in 2020 by State
 

@@ -16,5 +16,160 @@
   {}
 \endgroup
 
+
+\refsection{0}
+  \datalist[entry]{nyt/global//global/global/global}
+    \entry{antmanEthnicAttritionObserved2016}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=027166a0a07b4166565e41ab9c7051d4}{%
+           family={Antman},
+           familyi={A\bibinitperiod},
+           given={Francisca},
+           giveni={F\bibinitperiod}}}%
+        {{hash=028bafcd91a81da51bc7eb575a2392ce}{%
+           family={Duncan},
+           familyi={D\bibinitperiod},
+           given={Brian},
+           giveni={B\bibinitperiod}}}%
+        {{hash=a97c2de88e00743241d71e2e6d236672}{%
+           family={Trejo},
+           familyi={T\bibinitperiod},
+           given={Stephen\bibnamedelima J.},
+           giveni={S\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {American Economic Association}%
+      }
+      \strng{namehash}{2aab7f6ac1c36fbcacd088f709a3bf79}
+      \strng{fullhash}{2aab7f6ac1c36fbcacd088f709a3bf79}
+      \strng{fullhashraw}{2aab7f6ac1c36fbcacd088f709a3bf79}
+      \strng{bibnamehash}{2aab7f6ac1c36fbcacd088f709a3bf79}
+      \strng{authorbibnamehash}{2aab7f6ac1c36fbcacd088f709a3bf79}
+      \strng{authornamehash}{2aab7f6ac1c36fbcacd088f709a3bf79}
+      \strng{authorfullhash}{2aab7f6ac1c36fbcacd088f709a3bf79}
+      \strng{authorfullhashraw}{2aab7f6ac1c36fbcacd088f709a3bf79}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{author}
+      \field{eprinttype}{jstor}
+      \field{issn}{0002-8282}
+      \field{journaltitle}{The American Economic Review}
+      \field{number}{5}
+      \field{title}{Ethnic {{Attrition}} and the {{Observed Health}} of {{Later-Generation Mexican Americans}}}
+      \field{urlday}{18}
+      \field{urlmonth}{5}
+      \field{urlyear}{2022}
+      \field{volume}{106}
+      \field{year}{2016}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{467\bibrangedash 471}
+      \range{pages}{5}
+      \verb{eprint}
+      \verb 43861065
+      \endverb
+      \verb{file}
+      \verb /Users/hhadah/Zotero/storage/LPLCGSCX/Antman et al. - 2016 - Ethnic Attrition and the Observed Health of Later-.pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://www.jstor.org/stable/43861065
+      \endverb
+      \verb{url}
+      \verb http://www.jstor.org/stable/43861065
+      \endverb
+    \endentry
+    \entry{floodsarahIntegratedPublicUse2021a}{dataset}{}{}
+      \name{author}{6}{}{%
+        {{hash=1d1fdad8c06cc33521b145d93817da67}{%
+           family={Flood},
+           familyi={F\bibinitperiod},
+           given={Sarah},
+           giveni={S\bibinitperiod}}}%
+        {{hash=ab42c3eadba152d84026b753bf8af73d}{%
+           family={King},
+           familyi={K\bibinitperiod},
+           given={Miriam},
+           giveni={M\bibinitperiod}}}%
+        {{hash=18c822c799eae536099d4d057e8b4841}{%
+           family={Rodgers},
+           familyi={R\bibinitperiod},
+           given={Renae},
+           giveni={R\bibinitperiod}}}%
+        {{hash=7387f51a82f67bf6afaf06e50696a5ba}{%
+           family={Ruggles},
+           familyi={R\bibinitperiod},
+           given={Steven},
+           giveni={S\bibinitperiod}}}%
+        {{hash=87c260141b59c836dfb32a91619ec27a}{%
+           family={Warren},
+           familyi={W\bibinitperiod},
+           given={J.\bibnamedelimi Robert},
+           giveni={J\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+        {{hash=d4fdaff39992b835ca77108ce69ca378}{%
+           family={Westberry},
+           familyi={W\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+      }
+      \name{namea}{2}{}{%
+        {{hash=8790a5c7b54290e7602a80de67b31da6}{%
+           family={Bureau},
+           familyi={B\bibinitperiod},
+           given={United\bibnamedelimb States\bibnamedelima Census},
+           giveni={U\bibinitperiod\bibinitdelim S\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+        {{hash=fdfb43769695b838bc0a497f529753ec}{%
+           family={Statistics},
+           familyi={S\bibinitperiod},
+           given={United\bibnamedelimb States\bibnamedelimb Bureau\bibnamedelimb Of\bibnamedelima Labor},
+           giveni={U\bibinitperiod\bibinitdelim S\bibinitperiod\bibinitdelim B\bibinitperiod\bibinitdelim O\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Minneapolis, MN: IPUMS}%
+      }
+      \strng{namehash}{87456bed5e54d6af3f4b6390d336af2c}
+      \strng{fullhash}{62d7cf5e98e48cbe7cf757e57ba31a3f}
+      \strng{fullhashraw}{62d7cf5e98e48cbe7cf757e57ba31a3f}
+      \strng{bibnamehash}{62d7cf5e98e48cbe7cf757e57ba31a3f}
+      \strng{authorbibnamehash}{62d7cf5e98e48cbe7cf757e57ba31a3f}
+      \strng{authornamehash}{87456bed5e54d6af3f4b6390d336af2c}
+      \strng{authorfullhash}{62d7cf5e98e48cbe7cf757e57ba31a3f}
+      \strng{authorfullhashraw}{62d7cf5e98e48cbe7cf757e57ba31a3f}
+      \strng{nameabibnamehash}{52c20f7085d2ca98b6422d6db4b124cd}
+      \strng{nameanamehash}{52c20f7085d2ca98b6422d6db4b124cd}
+      \strng{nameafullhash}{52c20f7085d2ca98b6422d6db4b124cd}
+      \strng{nameafullhashraw}{52c20f7085d2ca98b6422d6db4b124cd}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{IPUMS-CPS is dedicated to integrating and disseminating microdata from the Current Population Survey (CPS). The CPS is a monthly U.S. household survey conducted jointly by the U.S. Census Bureau and the Bureau of Labor Statistics. IPUMS-CPS contains harmonized data from every Annual Social and Economic Supplement (ASEC) supplement from 1962 to the present and all other supplements from 1976 to present. In addition to the many of the variables included in census data (race and ethnicity, education, income, occupation, industry, migration, disability, and veteran status), IPUMS-CPS includes additional information on work and income, such as participation in welfare programs, job searching, barriers to looking for work, union membership, hourly wages, health insurance, and tax liability. In addition, monthly supplements supplemental for certain years include information on computer and Internet use, displaced workers, fertility, food security, job tenure, tobacco use, volunteer activities, voter registration, and work schedules. IPUMS-CPS data are available through an online data access system free of charge to registered users at cps.ipums.org.}
+      \field{langid}{english}
+      \field{nameatype}{collaborator}
+      \field{shorttitle}{Integrated {{Public Use Microdata Series}}, {{Current Population Survey}}}
+      \field{title}{Integrated {{Public Use Microdata Series}}, {{Current Population Survey}}: {{Version}} 9.0}
+      \field{urlday}{30}
+      \field{urlmonth}{8}
+      \field{urlyear}{2022}
+      \field{version}{9.0}
+      \field{year}{2021}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.18128/D030.V9.0
+      \endverb
+      \verb{urlraw}
+      \verb https://cps.ipums.org
+      \endverb
+      \verb{url}
+      \verb https://cps.ipums.org
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
 \endinput
 
