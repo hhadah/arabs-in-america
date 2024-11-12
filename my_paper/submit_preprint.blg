@@ -1,0 +1,18 @@
+[0] Config.pm:308> INFO - This is Biber 2.20
+[0] Config.pm:311> INFO - Logfile is 'submit_preprint.blg'
+[39] biber-darwin:340> INFO - === Tue Nov 12, 2024, 11:19:36
+[51] Biber.pm:420> INFO - Reading 'submit_preprint.bcf'
+[131] Biber.pm:994> INFO - Found 2 citekeys in bib section 0
+[139] Biber.pm:4463> INFO - Processing section 0
+[144] Biber.pm:4654> INFO - Looking for bibtex file 'bib/references.bib' for section 0
+[145] bibtex.pm:1713> INFO - LaTeX decoding ...
+[153] bibtex.pm:1519> INFO - Found BibTeX data source 'bib/references.bib'
+[181] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[182] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'level = 4' with 'level = 2'
+[182] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[182] Biber.pm:4283> INFO - Sorting list 'nyt/global//global/global/global' of type 'entry' with template 'nyt' and locale 'en-US'
+[182] Biber.pm:4289> INFO - No sort tailoring available for locale 'en-US'
+[186] bbl.pm:676> INFO - Writing 'submit_preprint.bbl' with encoding 'UTF-8'
+[187] bbl.pm:779> INFO - Output to submit_preprint.bbl
+[187] Biber.pm:131> WARN - BibTeX subsystem: /var/folders/yk/l30p1rcd2fsfx74wfvs62cmh0000gn/T/biber_tmp_iEIB/33e59b5ca9ec342068223d604c3f8d55_10696.utf8, line 35, warning: 1 characters of junk seen at toplevel
+[187] Biber.pm:133> INFO - WARNINGS: 1
