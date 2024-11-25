@@ -33,3 +33,7 @@ options(modelsummary_factory_latex = "kableExtra")
 ### run do files and scripts
 
 source(file.path(programs,"01_packages_wds.R")) # set up packages
+source(file.path(programs,"02-data-cleaning.R")) # data cleaning
+source(file.path(programs,"03-counting-arabs.R")) # counting arabs
+source(file.path(programs,"04-creating-ses-var.R")) # creating ses var
+source(file.path(programs,"05-plots-ses.R")) # plots ses

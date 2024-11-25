@@ -1,0 +1,383 @@
+###################################
+# Plotting SES Trends by Generation
+# First version: Nov 6, 2024
+# Edited: Nov 6th. 2024
+###################################
+
+CPS <- fread(file.path(dropbox_dir,"CPS_SES_VAR.csv.gz"))
+
+# Define 4-year intervals
+CPS[, year_interval := floor((year - 1994) / 4) * 4 + 1994]
+
+# Calculate mean SES by year and group for all generations
+ses_by_group <- CPS[FirstGen == 1 | FirstGen_Asian == 1 | FirstGen_Arab == 1 | 
+                    SecondGen == 1 | SecondGen_Asian == 1 | SecondGen_Arab == 1 | 
+                    ThirdGen == 1 | ThirdGen_Asian == 1 | ThirdGen_Arab == 1 |
+                    FourthGen_White == 1 | BlackChild == 1,
+                   .(mean_ses_lw    = mean(ses_lw_std, na.rm = TRUE),
+                     mean_ses_pca   = mean(SES_PCA, na.rm = TRUE),
+                     mean_ses       = mean(SES, na.rm = TRUE),
+                     se_ses         = sd(ses_lw_std, na.rm = TRUE) / sqrt(.N),
+                     n = .N),
+                   by = .(year_interval,
+                         group = case_when(
+                           FirstGen == 1 ~ "Hispanic First Gen",
+                           FirstGen_Asian == 1 ~ "Asian First Gen",
+                           FirstGen_Arab == 1 ~ "Arab First Gen",
+                           SecondGen == 1 ~ "Hispanic Second Gen",
+                           SecondGen_Asian == 1 ~ "Asian Second Gen",
+                           SecondGen_Arab == 1 ~ "Arab Second Gen",
+                           ThirdGen == 1 ~ "Hispanic Third Gen",
+                           ThirdGen_Asian == 1 ~ "Asian Third Gen",
+                           ThirdGen_Arab == 1 ~ "Arab Third Gen",
+                           FourthGen_White == 1 ~ "Fourth Gen+ White",
+                           BlackChild == 1 ~ "Black"
+                         ))]
+
+# Filter ses_by_group to include only data from 2000 onwards
+# ses_by_group <- ses_by_group[year_interval >= 2000 & year_interval <= 2023]
+
+# Create plot for First Generation only with fixed legend
+first_gen_plot <- function(data) {
+  # Filter data for first generation and reference group
+  plot_data <- data[group %in% c("Hispanic First Gen", "Asian First Gen", 
+                                "Arab First Gen", "Fourth Gen+ White", "Black")]
+  
+  ggplot(plot_data, aes(x = year_interval, y = mean_ses_lw, 
+                        color = group, 
+                        shape = group,
+                        linetype = group)) +
+    geom_line(linewidth = 1) +
+    geom_point(size = 2) +
+    geom_ribbon(aes(ymin = mean_ses_lw - 1.96*se_ses, 
+                    ymax = mean_ses_lw + 1.96*se_ses,
+                    fill = group), 
+                alpha = 0.1) +
+    scale_color_manual(name = "Group",
+      values = c(
+        "Hispanic First Gen" = "#D55E00",      # Orange-red
+        "Asian First Gen" = "#0072B2",         # Deep blue
+        "Arab First Gen" = "#CC79A7",          # Pink
+        "Fourth Gen+ White" = "#000000",       # Black
+        "Black" = "#009E73"                    # Teal
+    )) +
+    scale_fill_manual(values = c(
+      "Hispanic First Gen" = "#D55E00",
+      "Asian First Gen" = "#0072B2",
+      "Arab First Gen" = "#CC79A7",
+      "Fourth Gen+ White" = "#000000",
+      "Black" = "#009E73"
+    )) +
+    scale_shape_manual(name = "Group",
+      values = c(
+        "Hispanic First Gen" = 16,    # Circle
+        "Asian First Gen" = 17,       # Triangle
+        "Arab First Gen" = 15,        # Square
+        "Fourth Gen+ White" = 18,     # Diamond
+        "Black" = 19                  # Circle with plus
+    )) +
+    scale_linetype_manual(name = "Group",
+      values = c(
+        "Hispanic First Gen" = "solid",
+        "Asian First Gen" = "solid",
+        "Arab First Gen" = "solid",
+        "Fourth Gen+ White" = "dashed",
+        "Black" = "solid"
+    )) +
+    labs(title = "First Generation Immigrant SES Trends",
+         subtitle = "Compared to Fourth Generation+ White",
+         x = "Year",
+         y = "Mean SES Score") +
+    theme_customs() +
+    theme(legend.position = "bottom",
+          plot.title = element_text(face = "bold"),
+          axis.text = element_text(size = 10),
+          axis.title = element_text(size = 12),
+          legend.margin = margin()) +
+    guides(color = guide_legend(nrow = 1, override.aes = list(size = 3)),
+           shape = guide_legend(nrow = 1, override.aes = list(size = 3)),
+           fill = "none",
+           linetype = "none") +
+    scale_x_continuous(breaks = scales::pretty_breaks(n = 8))
+}
+
+# Create and display the plot
+first_gen_ses <- first_gen_plot(ses_by_group)
+print(first_gen_ses)
+ggsave(paste0(figures_wd,"/04-SES-firstgens.png"), width = 10, height = 6, units = "in")
+ggsave(paste0(thesis_plots,"/04-SES-firstgens.png"), width = 10, height = 6, units = "in")
+
+# Calculate summary statistics for first generation
+summary_stats_first <- ses_by_group[group %in% c("Hispanic First Gen", 
+                                                "Asian First Gen", 
+                                                "Arab First Gen", 
+                                                "Fourth Gen+ White",
+                                                "Black"),
+                                  .(mean_ses_lw = round(mean(mean_ses_lw, na.rm = TRUE), 2),
+                                    Min_SES = round(min(mean_ses_lw, na.rm = TRUE), 2),
+                                    Max_SES = round(max(mean_ses_lw, na.rm = TRUE), 2),
+                                    Avg_Sample_Size = round(mean(n, na.rm = TRUE), 0)),
+                                  by = group]
+
+# Calculate gaps relative to Fourth Gen+ White
+gaps_first <- ses_by_group[group %in% c("Hispanic First Gen", 
+                                       "Asian First Gen", 
+                                       "Arab First Gen", 
+                                       "Fourth Gen+ White",
+                                       "Black")]
+
+# Create wide format
+gaps_wide <- dcast(gaps_first, year_interval ~ group, value.var = "mean_ses_lw")
+
+# Calculate gaps
+gaps_wide[, ':=' (
+  Hispanic_Gap = `Hispanic First Gen` - `Fourth Gen+ White`,
+  Asian_Gap = `Asian First Gen` - `Fourth Gen+ White`,
+  Arab_Gap = `Arab First Gen` - `Fourth Gen+ White`,
+  Black_Gap = `Black` - `Fourth Gen+ White`
+)]
+
+# Calculate mean gaps
+mean_gaps <- gaps_wide[, .(
+  Mean_Hispanic_Gap = mean(Hispanic_Gap, na.rm = TRUE),
+  Mean_Asian_Gap = mean(Asian_Gap, na.rm = TRUE),
+  Mean_Arab_Gap = mean(Arab_Gap, na.rm = TRUE),
+  Mean_Black_Gap = mean(Black_Gap, na.rm = TRUE)
+)]
+
+# Print summary statistics
+print("Summary Statistics:")
+print(summary_stats_first)
+
+print("\nMean SES Gaps relative to Fourth Gen+ White:")
+print(round(mean_gaps, 2))
+
+# Create plot for Second Generation only with fixed legend
+second_gen_plot <- function(data) {
+  # Filter data for second generation and reference group
+  plot_data <- data[group %in% c("Hispanic Second Gen", "Asian Second Gen", 
+                                "Arab Second Gen", "Fourth Gen+ White", "Black")]
+  
+  ggplot(plot_data, aes(x = year_interval, y = mean_ses_lw, 
+                        color = group, 
+                        shape = group,
+                        linetype = group)) +
+    geom_line(linewidth = 1) +
+    geom_point(size = 2) +
+    geom_ribbon(aes(ymin = mean_ses_lw - 1.96*se_ses, 
+                    ymax = mean_ses_lw + 1.96*se_ses,
+                    fill = group), 
+                alpha = 0.1) +
+    scale_color_manual(name = "Group",
+      values = c(
+        "Hispanic Second Gen" = "#D55E00",     # Orange-red
+        "Asian Second Gen" = "#0072B2",        # Deep blue
+        "Arab Second Gen" = "#CC79A7",         # Pink
+        "Fourth Gen+ White" = "#000000",       # Black
+        "Black" = "#009E73"                    # Teal
+    )) +
+    scale_fill_manual(values = c(
+      "Hispanic Second Gen" = "#D55E00",
+      "Asian Second Gen" = "#0072B2",
+      "Arab Second Gen" = "#CC79A7",
+      "Fourth Gen+ White" = "#000000",
+      "Black" = "#009E73"
+    )) +
+    scale_shape_manual(name = "Group",
+      values = c(
+        "Hispanic Second Gen" = 16,    # Circle
+        "Asian Second Gen" = 17,       # Triangle
+        "Arab Second Gen" = 15,        # Square
+        "Fourth Gen+ White" = 18,      # Diamond
+        "Black" = 19                   # Circle with plus
+    )) +
+    scale_linetype_manual(name = "Group",
+      values = c(
+        "Hispanic Second Gen" = "solid",
+        "Asian Second Gen" = "solid",
+        "Arab Second Gen" = "solid",
+        "Fourth Gen+ White" = "dashed",
+        "Black" = "solid"
+    )) +
+    labs(title = "Second Generation Immigrant SES Trends",
+         subtitle = "Compared to Fourth Generation+ White",
+         x = "Year",
+         y = "Mean SES Score") +
+    theme_customs() +
+    theme(legend.position = "bottom",
+          plot.title = element_text(face = "bold"),
+          axis.text = element_text(size = 10),
+          axis.title = element_text(size = 12),
+          legend.margin = margin()) +
+    guides(color = guide_legend(nrow = 1, override.aes = list(size = 3)),
+           shape = guide_legend(nrow = 1, override.aes = list(size = 3)),
+           fill = "none",
+           linetype = "none") +
+    scale_x_continuous(breaks = scales::pretty_breaks(n = 8))
+}
+
+# Create and display the plot
+second_gen_ses <- second_gen_plot(ses_by_group)
+print(second_gen_ses)
+ggsave(paste0(figures_wd,"/05-SES-secondgens.png"), width = 10, height = 6, units = "in")
+ggsave(paste0(thesis_plots,"/05-SES-secondgens.png"), width = 10, height = 6, units = "in")
+
+# Calculate summary statistics for second generation
+summary_stats_second <- ses_by_group[group %in% c("Hispanic Second Gen", 
+                                                 "Asian Second Gen", 
+                                                 "Arab Second Gen", 
+                                                 "Fourth Gen+ White",
+                                                 "Black"),
+                                   .(mean_ses_lw = round(mean(mean_ses_lw, na.rm = TRUE), 2),
+                                     Min_SES = round(min(mean_ses_lw, na.rm = TRUE), 2),
+                                     Max_SES = round(max(mean_ses_lw, na.rm = TRUE), 2),
+                                     Avg_Sample_Size = round(mean(n, na.rm = TRUE), 0)),
+                                   by = group]
+
+# Calculate gaps for second generation
+gaps_second <- ses_by_group[group %in% c("Hispanic Second Gen", 
+                                        "Asian Second Gen", 
+                                        "Arab Second Gen", 
+                                        "Fourth Gen+ White",
+                                        "Black")]
+
+# Create wide format
+gaps_wide_second <- dcast(gaps_second, year_interval ~ group, value.var = "mean_ses_lw")
+
+# Calculate gaps
+gaps_wide_second[, ':=' (
+  Hispanic_Gap = `Hispanic Second Gen` - `Fourth Gen+ White`,
+  Asian_Gap = `Asian Second Gen` - `Fourth Gen+ White`,
+  Arab_Gap = `Arab Second Gen` - `Fourth Gen+ White`,
+  Black_Gap = `Black` - `Fourth Gen+ White`
+)]
+
+# Calculate mean gaps
+mean_gaps_second <- gaps_wide_second[, .(
+  Mean_Hispanic_Gap = mean(Hispanic_Gap, na.rm = TRUE),
+  Mean_Asian_Gap = mean(Asian_Gap, na.rm = TRUE),
+  Mean_Arab_Gap = mean(Arab_Gap, na.rm = TRUE),
+  Mean_Black_Gap = mean(Black_Gap, na.rm = TRUE)
+)]
+
+# Print summary statistics
+print("Summary Statistics:")
+print(summary_stats_second)
+
+print("\nMean SES Gaps relative to Fourth Gen+ White:")
+print(round(mean_gaps_second, 2))
+
+# Create plot for Third Generation only with fixed legend
+third_gen_plot <- function(data) {
+  # Filter data for third generation and reference group
+  plot_data <- data[group %in% c("Hispanic Third Gen", "Asian Third Gen", 
+                                "Arab Third Gen", "Fourth Gen+ White", "Black")]
+  
+  ggplot(plot_data, aes(x = year_interval, y = mean_ses_lw, 
+                        color = group, 
+                        shape = group,
+                        linetype = group)) +
+    geom_line(linewidth = 1) +
+    geom_point(size = 2) +
+    geom_ribbon(aes(ymin = mean_ses_lw - 1.96*se_ses, 
+                    ymax = mean_ses_lw + 1.96*se_ses,
+                    fill = group), 
+                alpha = 0.1) +
+    scale_color_manual(name = "Group",
+      values = c(
+        "Hispanic Third Gen" = "#D55E00",      # Orange-red
+        "Asian Third Gen" = "#0072B2",         # Deep blue
+        "Arab Third Gen" = "#CC79A7",          # Pink
+        "Fourth Gen+ White" = "#000000",       # Black
+        "Black" = "#009E73"                    # Teal
+    )) +
+    scale_fill_manual(values = c(
+      "Hispanic Third Gen" = "#D55E00",
+      "Asian Third Gen" = "#0072B2",
+      "Arab Third Gen" = "#CC79A7",
+      "Fourth Gen+ White" = "#000000",
+      "Black" = "#009E73"
+    )) +
+    scale_shape_manual(name = "Group",
+      values = c(
+        "Hispanic Third Gen" = 16,     # Circle
+        "Asian Third Gen" = 17,        # Triangle
+        "Arab Third Gen" = 15,         # Square
+        "Fourth Gen+ White" = 18,      # Diamond
+        "Black" = 19                   # Circle with plus
+    )) +
+    scale_linetype_manual(name = "Group",
+      values = c(
+        "Hispanic Third Gen" = "solid",
+        "Asian Third Gen" = "solid",
+        "Arab Third Gen" = "solid",
+        "Fourth Gen+ White" = "dashed",
+        "Black" = "solid"
+    )) +
+    labs(title = "Third Generation Immigrant SES Trends",
+         subtitle = "Compared to Fourth Generation+ White",
+         x = "Year",
+         y = "Mean SES Score") +
+    theme_customs() +
+    theme(legend.position = "bottom",
+          plot.title = element_text(face = "bold"),
+          axis.text = element_text(size = 10),
+          axis.title = element_text(size = 12),
+          legend.margin = margin()) +
+    guides(color = guide_legend(nrow = 1, override.aes = list(size = 3)),
+           shape = guide_legend(nrow = 1, override.aes = list(size = 3)),
+           fill = "none",
+           linetype = "none") +
+    scale_x_continuous(breaks = scales::pretty_breaks(n = 8))
+}
+
+# Create and display the plot
+third_gen_ses <- third_gen_plot(ses_by_group)
+print(third_gen_ses)
+ggsave(paste0(figures_wd,"/06-SES-thirdgens.png"), width = 10, height = 6, units = "in")
+ggsave(paste0(thesis_plots,"/06-SES-thirdgens.png"), width = 10, height = 6, units = "in")
+
+# Calculate summary statistics for third generation
+summary_stats_third <- ses_by_group[group %in% c("Hispanic Third Gen", 
+                                                "Asian Third Gen", 
+                                                "Arab Third Gen", 
+                                                "Fourth Gen+ White",
+                                                "Black"),
+                                  .(mean_ses_lw = round(mean(mean_ses_lw, na.rm = TRUE), 2),
+                                    Min_SES = round(min(mean_ses_lw, na.rm = TRUE), 2),
+                                    Max_SES = round(max(mean_ses_lw, na.rm = TRUE), 2),
+                                    Avg_Sample_Size = round(mean(n, na.rm = TRUE), 0)),
+                                  by = group]
+
+# Calculate gaps for third generation
+gaps_third <- ses_by_group[group %in% c("Hispanic Third Gen", 
+                                       "Asian Third Gen", 
+                                       "Arab Third Gen", 
+                                       "Fourth Gen+ White",
+                                       "Black")]
+
+# Create wide format
+gaps_wide_third <- dcast(gaps_third, year_interval ~ group, value.var = "mean_ses_lw")
+
+# Calculate gaps
+gaps_wide_third[, ':=' (
+  Hispanic_Gap = `Hispanic Third Gen` - `Fourth Gen+ White`,
+  Asian_Gap = `Asian Third Gen` - `Fourth Gen+ White`,
+  Arab_Gap = `Arab Third Gen` - `Fourth Gen+ White`,
+  Black_Gap = `Black` - `Fourth Gen+ White`
+)]
+
+# Calculate mean gaps
+mean_gaps_third <- gaps_wide_third[, .(
+  Mean_Hispanic_Gap = mean(Hispanic_Gap, na.rm = TRUE),
+  Mean_Asian_Gap = mean(Asian_Gap, na.rm = TRUE),
+  Mean_Arab_Gap = mean(Arab_Gap, na.rm = TRUE),
+  Mean_Black_Gap = mean(Black_Gap, na.rm = TRUE)
+)]
+
+# Print summary statistics
+print("Summary Statistics:")
+print(summary_stats_third)
+
+print("\nMean SES Gaps relative to Fourth Gen+ White:")
+print(round(mean_gaps_third, 2))
