@@ -14,10 +14,14 @@ ses_by_group <- CPS[FirstGen == 1 | FirstGen_Asian == 1 | FirstGen_Arab == 1 |
                     SecondGen == 1 | SecondGen_Asian == 1 | SecondGen_Arab == 1 | 
                     ThirdGen == 1 | ThirdGen_Asian == 1 | ThirdGen_Arab == 1 |
                     FourthGen_White == 1 | BlackChild == 1,
-                   .(mean_ses_lw    = mean(ses_lw_std, na.rm = TRUE),
-                     mean_ses_pca   = mean(SES_PCA, na.rm = TRUE),
-                     mean_ses       = mean(SES, na.rm = TRUE),
-                     se_ses         = sd(ses_lw_std, na.rm = TRUE) / sqrt(.N),
+                   .(mean_ses_lw     = mean(ses_lw_std, na.rm = TRUE),
+                     mean_ses_pca    = mean(SES_PCA, na.rm = TRUE),
+                     mean_ses        = mean(SES, na.rm = TRUE),
+                     mean_ses_faminc = mean(SES_faminc, na.rm = TRUE),
+                     se_ses_lw          = sd(ses_lw_std, na.rm = TRUE) / sqrt(.N),
+                     se_ses_pca          = sd(SES_PCA, na.rm = TRUE) / sqrt(.N),
+                     se_ses          = sd(SES, na.rm = TRUE) / sqrt(.N),
+                     se_ses_faminc          = sd(SES_faminc, na.rm = TRUE) / sqrt(.N),
                      n = .N),
                    by = .(year_interval,
                          group = case_when(
@@ -49,8 +53,8 @@ first_gen_plot <- function(data) {
                         linetype = group)) +
     geom_line(linewidth = 1) +
     geom_point(size = 2) +
-    geom_ribbon(aes(ymin = mean_ses_lw - 1.96*se_ses, 
-                    ymax = mean_ses_lw + 1.96*se_ses,
+    geom_ribbon(aes(ymin = mean_ses_lw - 1.96*se_ses_lw, 
+                    ymax = mean_ses_lw + 1.96*se_ses_lw,
                     fill = group), 
                 alpha = 0.1) +
     scale_color_manual(name = "Group",
@@ -164,8 +168,8 @@ second_gen_plot <- function(data) {
                         linetype = group)) +
     geom_line(linewidth = 1) +
     geom_point(size = 2) +
-    geom_ribbon(aes(ymin = mean_ses_lw - 1.96*se_ses, 
-                    ymax = mean_ses_lw + 1.96*se_ses,
+    geom_ribbon(aes(ymin = mean_ses_lw - 1.96*se_ses_lw, 
+                    ymax = mean_ses_lw + 1.96*se_ses_lw,
                     fill = group), 
                 alpha = 0.1) +
     scale_color_manual(name = "Group",
@@ -279,8 +283,8 @@ third_gen_plot <- function(data) {
                         linetype = group)) +
     geom_line(linewidth = 1) +
     geom_point(size = 2) +
-    geom_ribbon(aes(ymin = mean_ses_lw - 1.96*se_ses, 
-                    ymax = mean_ses_lw + 1.96*se_ses,
+    geom_ribbon(aes(ymin = mean_ses_lw - 1.96*se_ses_lw, 
+                    ymax = mean_ses_lw + 1.96*se_ses_lw,
                     fill = group), 
                 alpha = 0.1) +
     scale_color_manual(name = "Group",
@@ -381,3 +385,90 @@ print(summary_stats_third)
 
 print("\nMean SES Gaps relative to Fourth Gen+ White:")
 print(round(mean_gaps_third, 2))
+
+
+# Calculate mean SES by year and racial/ethnic group using direct classifications
+ses_by_demo <- CPS[, 
+  .(mean_ses_lw     = mean(ses_lw_std, na.rm = TRUE),
+    mean_ses_pca    = mean(SES_PCA, na.rm = TRUE),
+    mean_ses        = mean(SES, na.rm = TRUE),
+    mean_ses_faminc = mean(SES_faminc, na.rm = TRUE),
+    se_ses = sd(ses_lw_std, na.rm = TRUE) / sqrt(.N),
+    n = .N),
+  by = .(year_interval,
+         group = case_when(
+           Hispanic == 1 ~ "Hispanic",
+           Black == 1 ~ "Black",
+           White == 1 ~ "White",
+           Arab == 1 ~ "Arab",
+           Asian == 1 ~ "Asian",
+           TRUE ~ NA_character_
+         ))]
+
+# Remove NA groups
+ses_by_demo <- ses_by_demo[!is.na(group)]
+
+# Create plot function
+demographic_ses_plot <- function(data) {
+  ggplot(data, aes(x = year_interval, y = mean_ses_faminc, 
+                   color = group, 
+                   shape = group,
+                   linetype = group)) +
+    geom_line(linewidth = 1.2) +
+    geom_point(size = 3) +
+    geom_ribbon(aes(ymin = mean_ses_faminc - 1.96*se_ses, 
+                    ymax = mean_ses_faminc + 1.96*se_ses,
+                    fill = group), 
+                alpha = 0.1) +
+    scale_color_manual(name = "Race/Ethnicity",
+      values = c(
+        "Hispanic" = "#D55E00",    # Orange-red
+        "Arab" = "#CC79A7",        # Pink
+        "White" = "#000000",       # Black
+        "Black" = "#009E73",        # Teal
+        "Asian" = "#0072B2"        # Deep blue
+    )) +
+    scale_fill_manual(values = c(
+        "Hispanic" = "#D55E00",
+        "Arab" = "#CC79A7",
+        "White" = "#000000",
+        "Black" = "#009E73",
+        "Asian" = "#0072B2"
+    )) +
+    scale_shape_manual(name = "Race/Ethnicity",
+      values = c(
+        "Hispanic" = 16,    # Circle
+        "Arab" = 17,        # Triangle
+        "White" = 18,       # Diamond
+        "Black" = 15,        # Square
+        "Asian" = 19        # Circle with plus
+    )) +
+    scale_linetype_manual(name = "Race/Ethnicity",
+      values = c(
+        "Hispanic" = "solid",
+        "Arab" = "solid",
+        "White" = "dashed",
+        "Black" = "solid",
+        "Asian" = "solid"
+    )) +
+    labs(title = "Socioeconomic Status Trends by Race/Ethnicity",
+         x = "Year",
+         y = "Mean SES Score") +
+    theme_customs() +
+    theme(legend.position = "right",
+          plot.title = element_text(face = "bold"),
+          axis.text = element_text(size = 10),
+          axis.title = element_text(size = 12),
+          legend.text = element_text(size = 11),
+          legend.title = element_text(size = 12),
+          legend.margin = margin()) +
+    guides(color = guide_legend(override.aes = list(size = 3)),
+           shape = guide_legend(override.aes = list(size = 3)),
+           fill = "none",
+           linetype = guide_legend()) +
+    scale_x_continuous(breaks = scales::pretty_breaks(n = 8))
+}
+
+# Create and display the plot
+demo_plot <- demographic_ses_plot(ses_by_demo)
+print(demo_plot)

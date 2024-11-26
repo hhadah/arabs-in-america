@@ -102,8 +102,11 @@ CPS[, ':=' (
     ]
 CPS[, ':=' (
             Loginctot_mom = case_when(inctot_mom > 0 ~ log(inctot_mom)),
-            Loginctot_pop = case_when(inctot_pop > 0 ~ log(inctot_pop))
-            
+            Loginctot_pop = case_when(inctot_pop > 0 ~ log(inctot_pop)),
+            loghourwage_mom = case_when(hourwage_mom > 0 ~ log(hourwage_mom)),
+            logearnweek_mom = case_when(earnweek_mom > 0 ~ log(earnweek_mom)),
+            loghourwage_pop = case_when(hourwage_pop > 0 ~ log(hourwage_pop)),
+            logearnweek_pop = case_when(earnweek_pop > 0 ~ log(earnweek_pop))
             )
     ]
 
@@ -113,11 +116,17 @@ CPS[, ':=' (
     z_MomEduc           = scale(MomYearEduc),
     z_DadInc            = scale(Loginctot_pop),
     z_MomInc            = scale(Loginctot_mom),
+    z_mom_hourwage      = scale(loghourwage_mom),
+    z_mom_earnweek      = scale(logearnweek_mom),
+    z_pop_hourwage      = scale(loghourwage_pop),
+    z_pop_earnweek      = scale(logearnweek_pop),
     z_LogFamilyEarnings = scale(LogFamilyEarnings)
 )]
 
 # Create SES score (average of standardized components)
-CPS[, SES := rowMeans(cbind(z_DadEduc, z_MomEduc, z_LogFamilyEarnings), 
+CPS[, SES := rowMeans(cbind(z_DadEduc, z_MomEduc, z_mom_earnweek, z_pop_earnweek), 
+                      na.rm = TRUE)]
+CPS[, SES_faminc := rowMeans(cbind(z_LogFamilyEarnings), 
                       na.rm = TRUE)]
 
 # Create SES quintiles
@@ -147,7 +156,7 @@ install.packages("psych")
 library(psych)  # For PCA
 
 # Combine the standardized proxies into a matrix
-proxy_matrix <- as.matrix(CPS[, .(z_DadEduc, z_MomEduc, z_LogFamilyEarnings)])
+proxy_matrix <- as.matrix(CPS[, .(z_DadEduc, z_MomEduc, z_mom_earnweek, z_pop_earnweek)])
 
 # Perform PCA
 pca_result <- principal(proxy_matrix, nfactors = 1, rotate = "none")
@@ -244,6 +253,8 @@ CPS <- recoded_results$data
 # View the distribution of new categories
 print(recoded_results$category_summary)
 
+# create logfamearnweek
+CPS[, LogFamEarnWeek := logearnweek_mom + logearnweek_pop]
 # Function to implement Lubotsky-Wittenberg method with fixed effects
 lw_index <- function(data, 
                      outcome = "LogFamilyEarnings",
@@ -418,7 +429,7 @@ lw_index <- function(data,
 
 # Run the LW method with occupational variables
 results <- lw_index(CPS,
-                   outcome = "LogFamilyEarnings",
+                   outcome = "LogFamEarnWeek",
                    continuous_proxies = c("DadYearEduc", "MomYearEduc"), 
                    categorical_proxies = c("occ2010_pop_cat", "occ2010_mom_cat"))
 
@@ -427,7 +438,7 @@ print(results$weights)
 summary(results$regression)
 
 # Step 2: Identify the variables used to determine complete cases
-vars_to_check <- c("LogFamilyEarnings", "DadYearEduc", "MomYearEduc", 
+vars_to_check <- c("LogFamEarnWeek", "DadYearEduc", "MomYearEduc", 
                    "occ2010_pop_cat", "occ2010_mom_cat")
 
 # Step 3: Identify the rows with complete cases in the CPS data
