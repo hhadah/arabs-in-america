@@ -472,3 +472,6 @@ demographic_ses_plot <- function(data) {
 # Create and display the plot
 demo_plot <- demographic_ses_plot(ses_by_demo)
 print(demo_plot)
+
+ggsave(paste0(figures_wd,"/07-SES-selfreport-race-ethn.png"), width = 10, height = 6, units = "in")
+ggsave(paste0(thesis_plots,"/07-SES-selfreport-race-ethn.png"), width = 10, height = 6, units = "in")
