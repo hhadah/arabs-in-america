@@ -5,29 +5,21 @@
 # date: May 18th, 2022
 
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load(tictoc, parallel, pbapply, future, 
-               future.apply, furrr, RhpcBLASctl, memoise, 
+pacman::p_load(tictoc, parallel, pbapply, 
                here, foreign, mfx, tidyverse, hrbrthemes, 
-               estimatr, ivreg, fixest, sandwich, lmtest, 
-               margins, vtable, broom, modelsummary, 
-               stargazer, fastDummies, recipes, dummy, 
+               estimatr, broom, modelsummary, 
+               stargazer, 
                gplots, haven, huxtable, kableExtra, 
-               gmodels, survey, gtsummary, data.table, 
-               tidyfast, dtplyr, microbenchmark, ggpubr, 
-               tibble, viridis, wesanderson, censReg, 
-               rstatix, srvyr, formatR, sysfonts, 
+               data.table, 
+               tidyfast, dtplyr, 
+               tibble, viridis, wesanderson,  formatR, sysfonts, 
                showtextdb, showtext, thematic, 
-               sampleSelection, textme, paletteer, 
-               wesanderson, patchwork, RStata, car,
-               #textme, lodown,
-               BiocManager, Polychrome, effects,
-               maps, sf, multcomp, cdlTools,
-               finalfit, ggtext, glue, scales, 
-               gganimate, ggrepel, MetBrewer, fs,
-               marginaleffects, gghighlight, ggview,
-               camcorder, rnaturalearth, rnaturalearthdata,
-               latex2exp, igraph, httpgd, scales, lemon, beep, 
-               network, stringr)
+               textme, paletteer, 
+               ggtext, glue, scales, 
+               gganimate, ggrepel, MetBrewer,
+               gghighlight, ggview,
+               igraph, httpgd, lemon, beep, 
+               network, stringr, ineq)
 options("RStata.StataPath" = "/Applications/Stata/StataMP.app/Contents/MacOS/stata-mp")
 options("RStata.StataVersion" = 17)
 
