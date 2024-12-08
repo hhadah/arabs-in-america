@@ -140,20 +140,11 @@ CPS[, HighSES := as.numeric(SES > median(SES, na.rm = TRUE))]
 
 # Quick summary of the SES variables
 summary(CPS$SES)
-CrossTable(CPS$SES_quintile, CPS$Type, useNA = "ifany")
 table(CPS$HighSES, useNA = "ifany")
-CrossTable(CPS$HighSES, CPS$Type, useNA = "ifany")
-CrossTable(CPS$HighSES, CPS$Type_Arab, useNA = "ifany")
-CrossTable(CPS$HighSES, CPS$Type_Asian, useNA = "ifany")
-CrossTable(CPS$Type_Arab, useNA = "ifany")
 
 #------------------------------------------------------------
 # PCA
 #------------------------------------------------------------
-
-# Load necessary library
-install.packages("psych")
-library(psych)  # For PCA
 
 # Combine the standardized proxies into a matrix
 proxy_matrix <- as.matrix(CPS[, .(z_DadEduc, z_MomEduc, z_mom_earnweek, z_pop_earnweek)])
@@ -255,6 +246,7 @@ print(recoded_results$category_summary)
 
 # create logfamearnweek
 CPS[, LogFamEarnWeek := logearnweek_mom + logearnweek_pop]
+
 # Function to implement Lubotsky-Wittenberg method with fixed effects
 lw_index <- function(data, 
                      outcome = "LogFamilyEarnings",
@@ -433,9 +425,9 @@ results <- lw_index(CPS,
                    continuous_proxies = c("DadYearEduc", "MomYearEduc"), 
                    categorical_proxies = c("occ2010_pop_cat", "occ2010_mom_cat"))
 
-# View results
-print(results$weights)
-summary(results$regression)
+# # View results
+# print(results$weights)
+# summary(results$regression)
 
 # Step 2: Identify the variables used to determine complete cases
 vars_to_check <- c("LogFamEarnWeek", "DadYearEduc", "MomYearEduc", 
@@ -453,16 +445,16 @@ CPS[complete_cases, ses_lw := results$index]
 
 # Now, the CPS dataset has the index added to it
 # You can check the summary of the new index variable
-summary(CPS$ses_lw)
+# summary(CPS$ses_lw)
 
 # Plot the distribution of the index
 hist(CPS$ses_lw, main = "Distribution of LW Index", xlab = "LW Index")
 
 # Standardize the ses_lw index
-CPS[, ses_lw_std := scale(ses_lw)]
+CPS[, ses_lw_std := scale(ses_lw, center = TRUE, scale = TRUE)]
 
 # View the summary statistics of the standardized index
-summary(CPS$ses_lw_std)
+# summary(CPS$ses_lw_std)
 
 # Plot the distribution of the index
 hist(CPS$ses_lw_std, main = "Distribution of LW Index", xlab = "LW Index")
