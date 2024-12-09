@@ -394,6 +394,7 @@ ses_by_demo <- CPS[,
     mean_ses        = mean(SES, na.rm = TRUE),
     mean_ses_faminc = mean(SES_faminc, na.rm = TRUE),
     se_ses = sd(ses_lw_std, na.rm = TRUE) / sqrt(.N),
+    se_ses_faminc = sd(SES_faminc, na.rm = TRUE) / sqrt(.N),
     n = .N),
   by = .(year_interval,
          group = case_when(
@@ -410,14 +411,14 @@ ses_by_demo <- ses_by_demo[!is.na(group)]
 
 # Create plot function
 demographic_ses_plot <- function(data) {
-  ggplot(data, aes(x = year_interval, y = mean_ses_lw, 
+  ggplot(data, aes(x = year_interval, y = mean_ses_faminc, 
                    color = group, 
                    shape = group,
                    linetype = group)) +
     geom_line(linewidth = 1.2) +
     geom_point(size = 3) +
-    geom_ribbon(aes(ymin = mean_ses_lw - 1.96*se_ses, 
-                    ymax = mean_ses_lw + 1.96*se_ses,
+    geom_ribbon(aes(ymin = mean_ses_faminc - 1.96*se_ses_faminc, 
+                    ymax = mean_ses_faminc + 1.96*se_ses_faminc,
                     fill = group), 
                 alpha = 0.1) +
     scale_color_manual(name = "Race/Ethnicity",
