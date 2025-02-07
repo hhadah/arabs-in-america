@@ -40,7 +40,10 @@ ses_by_group <- CPS[(FirstGen == 1 | FirstGen_Asian == 1 | FirstGen_Arab == 1 |
 
 # Filter ses_by_group to include only data from 2000 onwards
 # ses_by_group <- ses_by_group[year_interval >= 2000 & year_interval <= 2023]
-
+recessions <- data.frame(
+    start = c(2001 - 0.25,  2007,        2020 - 0.25),
+    end   = c(2001 + 0.25,  2009,        2020 + 0.25)
+  )
 # Create plot for First Generation only with fixed legend
 first_gen_plot <- function(data) {
   # Filter data for first generation and reference group
@@ -51,6 +54,12 @@ first_gen_plot <- function(data) {
                         color = group, 
                         shape = group,
                         linetype = group)) +
+    geom_rect(
+      data = recessions,
+      aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
+      fill = "grey70", alpha = 0.3,
+      inherit.aes = FALSE
+    ) +
     geom_line(linewidth = 1) +
     geom_point(size = 2) +
     geom_ribbon(aes(ymin = mean_ses_lw - 1.96*se_ses_lw, 
@@ -166,6 +175,12 @@ second_gen_plot <- function(data) {
                         color = group, 
                         shape = group,
                         linetype = group)) +
+    geom_rect(
+      data = recessions,
+      aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
+      fill = "grey70", alpha = 0.3,
+      inherit.aes = FALSE
+    ) +
     geom_line(linewidth = 1) +
     geom_point(size = 2) +
     geom_ribbon(aes(ymin = mean_ses_lw - 1.96*se_ses_lw, 
@@ -281,6 +296,12 @@ third_gen_plot <- function(data) {
                         color = group, 
                         shape = group,
                         linetype = group)) +
+    geom_rect(
+      data = recessions,
+      aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
+      fill = "grey70", alpha = 0.3,
+      inherit.aes = FALSE
+    ) +
     geom_line(linewidth = 1) +
     geom_point(size = 2) +
     geom_ribbon(aes(ymin = mean_ses_lw - 1.96*se_ses_lw, 
@@ -415,6 +436,12 @@ demographic_ses_plot <- function(data) {
                    color = group, 
                    shape = group,
                    linetype = group)) +
+    geom_rect(
+      data = recessions,
+      aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
+      fill = "grey70", alpha = 0.3,
+      inherit.aes = FALSE
+    ) +
     geom_line(linewidth = 1.2) +
     geom_point(size = 3) +
     geom_ribbon(aes(ymin = mean_ses_faminc - 1.96*se_ses_faminc, 

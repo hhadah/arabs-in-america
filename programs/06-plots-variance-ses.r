@@ -31,8 +31,23 @@ ses_by_group <- CPS[(FirstGen == 1 | FirstGen_Asian == 1 | FirstGen_Arab == 1 |
                            BlackChild == 1 ~ "Black"
                          ))]
 
+# Add recession indicators
+ses_by_group[, recession := case_when(
+  year_interval == 2001 ~ "Dot-com Bubble",
+  year_interval >= 2007 & year_interval <= 2009 ~ "Great Recession",
+  year_interval == 2020 ~ "COVID-19 Recession",
+  TRUE ~ NA_character_
+)]
+
+# Add a flag for recession periods (useful for plotting)
+ses_by_group[, is_recession := !is.na(recession)]
+
 # Filter ses_by_group to include only data from 2000 onwards
 # ses_by_group <- ses_by_group[year_interval >= 2000 & year_interval <= 2023]
+recessions <- data.frame(
+    start = c(2001 - 0.25,  2007,        2020 - 0.25),
+    end   = c(2001 + 0.25,  2009,        2020 + 0.25)
+  )
 
 # Create plot for First Generation only with fixed legend
 first_gen_plot <- function(data) {
@@ -44,6 +59,12 @@ first_gen_plot <- function(data) {
                         color = group, 
                         shape = group,
                         linetype = group)) +
+    geom_rect(
+      data = recessions,
+      aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
+      fill = "grey70", alpha = 0.3,
+      inherit.aes = FALSE
+    ) +
     geom_line(linewidth = 1) +
     geom_point(size = 2) +
     scale_color_manual(name = "Group",
@@ -103,6 +124,12 @@ second_gen_plot <- function(data) {
                         color = group, 
                         shape = group,
                         linetype = group)) +
+    geom_rect(
+      data = recessions,
+      aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
+      fill = "grey70", alpha = 0.3,
+      inherit.aes = FALSE
+    ) +
     geom_line(linewidth = 1) +
     geom_point(size = 2) +
     scale_color_manual(name = "Group",
@@ -162,6 +189,12 @@ third_gen_plot <- function(data) {
                         color = group, 
                         shape = group,
                         linetype = group)) +
+    geom_rect(
+      data = recessions,
+      aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
+      fill = "grey70", alpha = 0.3,
+      inherit.aes = FALSE
+    ) +
     geom_line(linewidth = 1) +
     geom_point(size = 2) +
     scale_color_manual(name = "Group",
@@ -234,6 +267,12 @@ demographic_ses_plot <- function(data) {
                    color = group, 
                    shape = group,
                    linetype = group)) +
+    geom_rect(
+      data = recessions,
+      aes(xmin = start, xmax = end, ymin = -Inf, ymax = Inf),
+      fill = "grey70", alpha = 0.3,
+      inherit.aes = FALSE
+    ) +
     geom_line(linewidth = 1.2) +
     geom_point(size = 3) +
     scale_color_manual(name = "Race/Ethnicity",
