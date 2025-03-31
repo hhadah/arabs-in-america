@@ -55,7 +55,7 @@ first_gen_plot <- function(data) {
   plot_data <- data[group %in% c("Hispanic First Gen", "Asian First Gen", 
                                 "Arab First Gen", "Fourth Gen+ White", "Black")]
   
-  ggplot(plot_data, aes(x = year_interval, y = var_ses_lw, 
+p <- ggplot(plot_data, aes(x = year_interval, y = var_ses_lw, 
                         color = group, 
                         shape = group,
                         linetype = group)) +
@@ -65,6 +65,9 @@ first_gen_plot <- function(data) {
       fill = "grey70", alpha = 0.3,
       inherit.aes = FALSE
     ) +
+    # Add "Recessions" text label to the middle recession
+    annotate("text", x = 2008, y = max(plot_data$var_ses_lw) + 0.05, label = "Recessions", 
+             hjust = 0.5, size = 8, fontface = "bold", color = "gray30") +
     geom_line(linewidth = 1) +
     geom_point(size = 2) +
     scale_color_manual(name = "Group",
@@ -96,16 +99,32 @@ first_gen_plot <- function(data) {
          x = "Year",
          y = "Mean SES Score") +
     theme_customs() +
-    theme(legend.position = "bottom",
+    theme(legend.position = "none",
           plot.title = element_text(face = "bold"),
           axis.text = element_text(size = 10),
-          axis.title = element_text(size = 12),
-          legend.margin = margin()) +
+          axis.title = element_text(size = 12)) +
     guides(color = guide_legend(nrow = 1, override.aes = list(size = 3)),
            shape = guide_legend(nrow = 1, override.aes = list(size = 3)),
            fill = "none",
            linetype = "none") +
     scale_x_continuous(breaks = scales::pretty_breaks(n = 8))
+
+  last_year <- max(plot_data$year_interval)
+  label_data <- plot_data[plot_data$year_interval == last_year, ]
+  
+final_p <- p + 
+    ggrepel::geom_text_repel(
+      data = label_data,
+      aes(label = group, color = group),
+      fontface = "bold",
+      size = 10,
+      nudge_x = 1,
+      direction = "y",
+      segment.size = 0.5,
+      segment.color = "gray50"
+    )
+  
+  return(final_p)
 }
 
 # Create and display the plot
@@ -120,7 +139,8 @@ second_gen_plot <- function(data) {
   plot_data <- data[group %in% c("Hispanic Second Gen", "Asian Second Gen", 
                                 "Arab Second Gen", "Fourth Gen+ White", "Black")]
   
-  ggplot(plot_data, aes(x = year_interval, y = var_ses_lw, 
+  # Create the base plot
+  p <- ggplot(plot_data, aes(x = year_interval, y = var_ses_lw, 
                         color = group, 
                         shape = group,
                         linetype = group)) +
@@ -130,6 +150,9 @@ second_gen_plot <- function(data) {
       fill = "grey70", alpha = 0.3,
       inherit.aes = FALSE
     ) +
+    # Add "Recessions" text label to the middle recession
+    annotate("text", x = 2008, y = max(plot_data$var_ses_lw) + 0.05, label = "Recessions", 
+             hjust = 0.5, size = 8, fontface = "bold", color = "gray30") +
     geom_line(linewidth = 1) +
     geom_point(size = 2) +
     scale_color_manual(name = "Group",
@@ -161,18 +184,35 @@ second_gen_plot <- function(data) {
          x = "Year",
          y = "Mean SES Score") +
     theme_customs() +
-    theme(legend.position = "bottom",
+    theme(legend.position = "none",
           plot.title = element_text(face = "bold"),
           axis.text = element_text(size = 10),
-          axis.title = element_text(size = 12),
-          legend.margin = margin()) +
+          axis.title = element_text(size = 12)) +
     guides(color = guide_legend(nrow = 1, override.aes = list(size = 3)),
            shape = guide_legend(nrow = 1, override.aes = list(size = 3)),
            fill = "none",
            linetype = "none") +
     scale_x_continuous(breaks = scales::pretty_breaks(n = 8))
-}
 
+  # Get data points at the most recent year for labels
+  last_year <- max(plot_data$year_interval)
+  label_data <- plot_data[plot_data$year_interval == last_year, ]
+  
+  # Add direct labels
+  final_p <- p + 
+    ggrepel::geom_text_repel(
+      data = label_data,
+      aes(label = group, color = group),
+      fontface = "bold",
+      size = 10,
+      nudge_x = 1,
+      direction = "y",
+      segment.size = 0.5,
+      segment.color = "gray50"
+    )
+  
+  return(final_p)
+}
 # Create and display the plot
 second_gen_ses <- second_gen_plot(ses_by_group)
 print(second_gen_ses)
@@ -185,7 +225,8 @@ third_gen_plot <- function(data) {
   plot_data <- data[group %in% c("Hispanic Third Gen", "Asian Third Gen", 
                                 "Arab Third Gen", "Fourth Gen+ White", "Black")]
   
-  ggplot(plot_data, aes(x = year_interval, y = var_ses_lw, 
+  # Create the base plot
+  p <- ggplot(plot_data, aes(x = year_interval, y = var_ses_lw, 
                         color = group, 
                         shape = group,
                         linetype = group)) +
@@ -195,6 +236,9 @@ third_gen_plot <- function(data) {
       fill = "grey70", alpha = 0.3,
       inherit.aes = FALSE
     ) +
+    # Add "Recessions" text label to the middle recession
+    annotate("text", x = 2008, y = max(plot_data$var_ses_lw) + 0.05, label = "Recessions", 
+             hjust = 0.5, size = 8, fontface = "bold", color = "gray30") +
     geom_line(linewidth = 1) +
     geom_point(size = 2) +
     scale_color_manual(name = "Group",
@@ -226,16 +270,34 @@ third_gen_plot <- function(data) {
          x = "Year",
          y = "Mean SES Score") +
     theme_customs() +
-    theme(legend.position = "bottom",
+    theme(legend.position = "none",
           plot.title = element_text(face = "bold"),
           axis.text = element_text(size = 10),
-          axis.title = element_text(size = 12),
-          legend.margin = margin()) +
+          axis.title = element_text(size = 12)) +
     guides(color = guide_legend(nrow = 1, override.aes = list(size = 3)),
            shape = guide_legend(nrow = 1, override.aes = list(size = 3)),
            fill = "none",
            linetype = "none") +
     scale_x_continuous(breaks = scales::pretty_breaks(n = 8))
+
+  # Get data points at the most recent year for labels
+  last_year <- max(plot_data$year_interval)
+  label_data <- plot_data[plot_data$year_interval == last_year, ]
+  
+  # Add direct labels
+  final_p <- p + 
+    ggrepel::geom_text_repel(
+      data = label_data,
+      aes(label = group, color = group),
+      fontface = "bold",
+      size = 10,
+      nudge_x = 1,
+      direction = "y",
+      segment.size = 0.5,
+      segment.color = "gray50"
+    )
+  
+  return(final_p)
 }
 
 # Create and display the plot
@@ -263,7 +325,11 @@ ses_by_demo <- ses_by_demo[!is.na(group)]
 
 # Create plot function
 demographic_ses_plot <- function(data) {
-  ggplot(data, aes(x = year_interval, y = var_ses_lw, 
+  # Store the data in plot_data (you were missing this)
+  plot_data <- data
+  
+  # Create the base plot
+  p <- ggplot(data, aes(x = year_interval, y = var_ses_lw, 
                    color = group, 
                    shape = group,
                    linetype = group)) +
@@ -273,6 +339,9 @@ demographic_ses_plot <- function(data) {
       fill = "grey70", alpha = 0.3,
       inherit.aes = FALSE
     ) +
+    # Add "Recessions" text label to the middle recession
+    annotate("text", x = 2008, y = max(data$var_ses_lw) + 0.05, label = "Recessions", 
+              hjust = 0.5, size = 8, fontface = "bold", color = "gray30") +
     geom_line(linewidth = 1.2) +
     geom_point(size = 3) +
     scale_color_manual(name = "Race/Ethnicity",
@@ -299,22 +368,38 @@ demographic_ses_plot <- function(data) {
         "Black" = "solid",
         "Asian" = "solid"
     )) +
-    labs(title = "Socioeconomic Status Trends by Race/Ethnicity  of Variance",
+    labs(title = "Socioeconomic Status Trends by Race/Ethnicity of Variance",
          x = "Year",
          y = "Mean SES Score") +
     theme_customs() +
-    theme(legend.position = "right",
+    theme(legend.position = "none",
           plot.title = element_text(face = "bold"),
           axis.text = element_text(size = 10),
-          axis.title = element_text(size = 12),
-          legend.text = element_text(size = 11),
-          legend.title = element_text(size = 12),
-          legend.margin = margin()) +
+          axis.title = element_text(size = 12)) +
     guides(color = guide_legend(override.aes = list(size = 3)),
            shape = guide_legend(override.aes = list(size = 3)),
            fill = "none",
            linetype = guide_legend()) +
     scale_x_continuous(breaks = scales::pretty_breaks(n = 8))
+  
+  # Get data points at the most recent year for labels
+  last_year <- max(data$year_interval)
+  label_data <- data[data$year_interval == last_year, ]
+  
+  # Add direct labels
+  final_p <- p + 
+    ggrepel::geom_text_repel(
+      data = label_data,
+      aes(label = group, color = group),
+      fontface = "bold",
+      size = 10,
+      nudge_x = 1,
+      direction = "y",
+      segment.size = 0.5,
+      segment.color = "gray50"
+    )
+  
+  return(final_p)
 }
 
 # Create and display the plot
