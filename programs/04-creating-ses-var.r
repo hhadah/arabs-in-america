@@ -422,7 +422,7 @@ lw_index <- function(data,
 # Run the LW method with occupational variables
 results <- lw_index(CPS,
                    outcome = "LogFamEarnWeek",
-                   continuous_proxies = c("DadYearEduc", "MomYearEduc"), 
+                   continuous_proxies = NULL, 
                    categorical_proxies = c("occ2010_pop_cat", "occ2010_mom_cat"))
 
 # # View results
@@ -430,7 +430,7 @@ results <- lw_index(CPS,
 # summary(results$regression)
 
 # Step 2: Identify the variables used to determine complete cases
-vars_to_check <- c("LogFamEarnWeek", "DadYearEduc", "MomYearEduc", 
+vars_to_check <- c("LogFamEarnWeek", 
                    "occ2010_pop_cat", "occ2010_mom_cat")
 
 # Step 3: Identify the rows with complete cases in the CPS data
