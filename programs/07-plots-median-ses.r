@@ -285,4 +285,3 @@ print(demo_plot)
 
 ggsave(paste0(figures_wd,"/15-SES-median-selfreport-race-ethn.png"), width = 10, height = 6, units = "in")
 ggsave(paste0(thesis_plots,"/15-SES-median-selfreport-race-ethn.png"), width = 10, height = 6, units = "in")
-s
