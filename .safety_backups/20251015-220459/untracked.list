@@ -1,0 +1,21 @@
+.safety_backups/20251015-220459/.untracked.zlist
+.safety_backups/20251015-220459/status_and_log.txt
+.safety_backups/20251015-220459/working.patch
+README.md
+data/datasets/CPS_Arabs_bystate_DataTable.csv.gz
+data/datasets/CPS_DataTable_Arabs.csv.gz
+my_paper/figure/03-Arab-Map-2020.png
+my_paper/figure/14-SES-median-thirdgens.png
+my_paper/figure/17-second_gen_lorenz_curve.png
+my_paper/submit_preprint.aux
+my_paper/submit_preprint.blg
+my_paper/submit_preprint.fls
+output/tables/tab01-arab-bystate.tex
+papers/Chiswick-EarningsHumanCapital-1983.pdf
+papers/Sociological Forum - 2011 - Widner - It s All in the Name  Employment Discrimination Against Arab Americans1.pdf
+papers/William A. Darity-PeddlersForeverCulture-1985.pdf
+papers/neumark-2018-experimental-research-on-labor-market-discrimination.pdf
+papers/wang-et-al-2017-do-asian-americans-face-labor-market-discrimination-accounting-for-the-cost-of-living-among-native-born.pdf
+programs/08-distributions-ses.r
+programs/10-scraping-script.ipynb
+programs/lets-see.R
